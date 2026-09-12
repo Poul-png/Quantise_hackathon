@@ -1,11 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>CONNECTWAVE | 100% Автономное 3D</title>
+    
+    <!-- Подключаем внешние стили -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
+
+    <!-- Наш чистый 3D холст -->
+    <canvas id="retro-canvas"></canvas>
+
+    <!-- Навигация -->
+    <header>
+        <a href="#" class="logo">CONNECTWAVE</a>
+        <nav>
+            <ul>
+                <li><a href="#">Главная</a></li>
+                <li><a href="#about">О нас</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Основные секции -->
+    <main>
+        <section class="hero">
+            <h1>СВЯЗЬ ПОКОЛЕНИЙ</h1>
+            <p>Ретро-компьютерные технологии встречаются с киберпространством будущего.</p>
+            <a href="#about" class="cta-button">Начать путешествие</a>
+        </section>
+
+        <section id="about" class="about-section">
+            <h2>ЭКОСИСТЕМА БУДУЩЕГО</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Менторство</h3>
+                    <p>Прямой диалог и передача опыта от признанных экспертов рынка к новому поколению специалистов.</p>
+                </div>
+                <div class="card">
+                    <h3>Цифровой Стек</h3>
+                    <p>Современные ИИ-инструменты для аналитики навыков и подбора команд.</p>
+                </div>
+                <div class="card">
+                    <h3>Быстрый старт</h3>
+                    <p>Интеграция лучших выпускников в реальные технологические цепочки.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Подключаем внешний JavaScript сценарий -->
+    <script src="script.js"></script>
 </body>
 </html>

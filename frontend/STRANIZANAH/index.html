@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Detroit & LCT Advanced Interface</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- Холст для генеративной графики ЛЦТ и Электричества -->
+<canvas id="lctCanvas"></canvas>
+
+<!-- Деликатная фоновая кибер-сетка -->
+<div class="cyber-grid"></div>
+
+<!-- Карусель интерфейса (Слева, 50% ширины) -->
+<div class="carousel-zone">
+  <div class="carousel-wrapper" id="carouselWrapper">
+    <div id="circle"></div>
+  </div>
+  <div class="controls">
+    <button id="rotateLeft">SYS.UP</button>
+    <button id="rotateRight">SYS.DOWN</button>
+  </div>
+</div>
+
+<!-- Правая контентная зона для вывода описаний -->
+<div class="content" id="mainContent">
+  <h2 id="contentTitle">ЗАГРУЗКА СИСТЕМЫ...</h2>
+  <div id="contentDesc">Пожалуйста, выберите узел или прокрутите карусель.</div>
+</div>
+
+<!-- КИНЕМАТОГРАФИЧНЫЙ OVERLAY СЮЖЕТНОЙ ЛИНИИ DETROIT -->
+<div id="detroitOverlay" class="detroit-overlay">
+  <div class="detroit-header">
+    <div class="chapter-info">ГЛАВА 01 // ТЕСТИРОВАНИЕ СИСТЕМЫ</div>
+    <div class="flowchart-title">ПРОГРЕСС СЮЖЕТНОЙ ЛИНИИ</div>
+    <button class="close-detroit-btn" id="closeDetroit">ВЕРНУТЬСЯ В ИНТЕРФЕЙС</button>
+  </div>
+  
+  <div class="flowchart-container">
+    <svg id="flowchartLines"></svg>
+    <div id="flowchartNodes"></div>
+  </div>
+</div>
+
+<!-- Подключение логики -->
+<script src="carousel.js"></script>
+<script src="background.js"></script>
+</body>
+</html>

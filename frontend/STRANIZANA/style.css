@@ -1,0 +1,285 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  /* Вертикальный градиент: насыщенный фиолетовый верх, глубокий черный низ */
+  background: linear-gradient(180deg, #250c4f 0%, #0d061c 35%, #05020a 70%, #020105 100%);
+  color: #e2e2e9;
+  font-family: 'Courier New', Courier, monospace;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Холст для генеративной графики ЛЦТ и Электричества */
+#lctCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100; /* Базовый слой для отрисовки частиц */
+  pointer-events: none; /* Пропускает клики сквозь прозрачные области */
+}
+
+/* Деликатная фоновая кибер-сетка */
+.cyber-grid {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-image: 
+    linear-gradient(rgba(138, 43, 226, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(138, 43, 226, 0.015) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Зона карусели (Левая половина экрана) */
+.carousel-zone {
+  width: 50vw;
+  height: 100%;
+  position: relative;
+  z-index: 110; /* Выше холста, чтобы карточки всегда были доступны для клика */
+  display: flex;
+  flex-direction: column;
+}
+
+.carousel-wrapper {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  background: radial-gradient(circle at 0% 50%, rgba(0, 255, 255, 0.04) 0%, transparent 60%);
+}
+
+#circle {
+  position: absolute;
+  top: 50%;
+  left: -140px; 
+  width: 0;
+  height: 0;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Карточки-ноды меню */
+.card {
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  background: linear-gradient(145deg, #120c24, #070410) !important;
+  border: 1px solid rgba(138, 43, 226, 0.25) !important;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 15px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  font-weight: bold;
+  color: #a393cb !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  user-select: none;
+  z-index: 50;
+  left: -65px;
+  top: -65px;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease-out, box-shadow 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.card.active { opacity: 1 !important; pointer-events: auto !important; }
+
+.card:hover, .card.selected {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: #fff !important;
+  box-shadow: 0 15px 35px rgba(138, 43, 226, 0.15);
+}
+
+.card.selected {
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+  background: rgba(20, 12, 45, 0.8) !important;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.15), inset 0 0 10px rgba(255, 255, 255, 0.05);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+/* Кнопки переключения карусели внизу */
+.controls { display: flex; gap: 10px; padding: 25px; width: 360px; background: transparent; z-index: 120; }
+button {
+  flex: 1;
+  padding: 13px;
+  font-size: 11px;
+  font-family: inherit;
+  font-weight: bold;
+  background-color: rgba(18, 11, 36, 0.5);
+  color: #a393cb;
+  border: 1px solid rgba(138, 43, 226, 0.15);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+button:hover { background-color: #120c24; color: #fff; border-color: rgba(255, 255, 255, 0.3); }
+button:active { transform: scale(0.97); }
+
+/* Правая контентная зона для описаний */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 80px 40px;
+  overflow-y: auto;
+  z-index: 10;
+  position: relative;
+}
+
+#contentTitle { font-size: 26px; text-transform: uppercase; letter-spacing: 3px; color: #ffffff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.2); margin-top: 0; margin-bottom: 25px; }
+#contentDesc { font-size: 14px; line-height: 1.8; color: #a393cb; max-width: 550px; letter-spacing: 0.5px; }
+
+
+/* --- ИНТЕРФЕЙС DETROIT: BECOME HUMAN FLOWCHART --- */
+.detroit-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 75vw;
+  height: 100%;
+  background: rgba(5, 3, 14, 0.65); /* Стильное полупрозрачное затемнение */
+  backdrop-filter: blur(15px); /* Эффект матового стекла */
+  -webkit-backdrop-filter: blur(15px);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  
+  /* ИСПРАВЛЕНО: Поднимаем оверлей выше холста canvas, разблокируя клики */
+  z-index: 150; 
+  
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.5s cubic-bezier(0.3, 1, 0.4, 1);
+}
+
+.detroit-overlay.visible {
+  transform: translateX(0);
+}
+
+/* Верхняя статус-панель оверлея */
+.detroit-header {
+  padding: 30px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  z-index: 160;
+}
+.chapter-info { font-size: 11px; color: #8a8a9d; letter-spacing: 2px; }
+.flowchart-title { font-size: 16px; font-weight: bold; letter-spacing: 4px; color: #fff; text-shadow: 0 0 15px rgba(255,255,255,0.2); }
+
+/* ИСПРАВЛЕНО: Кнопка закрытия оверлея */
+.close-detroit-btn {
+  flex: none;
+  width: auto;
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  cursor: pointer;
+  
+  /* Принудительно выводим кнопку на верхний слой и разрешаем pointer-events */
+  position: relative;
+  z-index: 170 !important; 
+  pointer-events: auto !important;
+}
+.close-detroit-btn:hover { background: #fff; color: #000; border-color: #fff; }
+
+.flowchart-container {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+#flowchartLines {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
+}
+
+/* Векторные линии связей блок-схемы */
+.flow-line {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.flow-line.completed {
+  stroke: #00ffff;
+  filter: drop-shadow(0px 0px 4px #00ffff);
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawFlowPath 1s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.4s;
+}
+.flow-line.locked { stroke: rgba(255, 255, 255, 0.04); }
+
+@keyframes drawFlowPath { to { stroke-dashoffset: 0; } }
+
+/* Блоки-узлы прогресса сюжета */
+.detroit-node {
+  position: absolute;
+  width: 160px;
+  padding: 12px;
+  background: rgba(10, 6, 24, 0.85); /* Плотная подложка, чтобы текст читался сквозь сферу */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 10px;
+  letter-spacing: 1px;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: #8a8a9d;
+  transform: translateY(-50%);
+  opacity: 0;
+  
+  /* ИСПРАВЛЕНО: Даем узлам высокий приоритет клика и отображения */
+  z-index: 160; 
+  pointer-events: auto !important;
+  
+  animation: nodeSpawn 0.4s ease-out forwards;
+}
+
+@keyframes nodeSpawn { to { opacity: 1; } }
+
+.detroit-node.completed {
+  border-left: 3px solid #00ffff;
+  background: rgba(0, 255, 255, 0.04);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.05);
+}
+
+.detroit-node.current {
+  border: 1px solid #00ffff;
+  border-left: 3px solid #00ffff;
+  background: rgba(0, 255, 255, 0.1);
+  color: #00ffff;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.4);
+  animation: nodePulse 2s infinite alternate;
+}
+
+.detroit-node.locked {
+  border: 1px dashed rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.12);
+}
+
+@keyframes nodePulse {
+  0% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.1); }
+  100% { box-shadow: 0 0 25px rgba(0, 255, 255, 0.3), inset 0 0 5px rgba(0, 255, 255, 0.1); }
+}
